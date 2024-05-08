@@ -15,7 +15,7 @@ MODEL_ID = "deepseek"
 WEIGHTS_URL = "https://weights.replicate.delivery/default/deepseek-ai/DeepSeek-V2/model.tar"
 
 DEFAULT_MAX_NEW_TOKENS = 256
-DEFAULT_TEMPERATURE = 0.7
+DEFAULT_TEMPERATURE = 0.3
 DEFAULT_TOP_P = 0.8
 DEFAULT_TOP_K = 50
 DEFAULT_REPETITION_PENALTY = 1.05
@@ -115,6 +115,9 @@ class Predictor(BasePredictor):
             MODEL_ID,
             dtype="auto",
             tensor_parallel_size=8,
+            max_model_len=8192,
+            trust_remote_code=True,
+            enforce_eager=True
         )
 
     def predict(
@@ -122,7 +125,7 @@ class Predictor(BasePredictor):
         prompt: str = Input(description="Input prompt", default="An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The output is"),
         max_new_tokens: int = Input(
             description="The maximum number of tokens the model should generate as output.",
-            default=DEFAULT_MAX_NEW_TOKENS, ge=1, le=163840
+            default=DEFAULT_MAX_NEW_TOKENS, ge=1, le=128000
         ),
         temperature: float = Input(
             description="The value used to modulate the next token probabilities.", default=DEFAULT_TEMPERATURE
